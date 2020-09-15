@@ -12,6 +12,6 @@ Programado en Python 3. Puede ejecutar esta herramienta en un contenedor Docker 
 ```
 pip  install  -r  requirements.txt
 ```
-Además debe configurar un string aleatorio critpográficamente seguro en la variable de entorno `SECRET` que será por la generación de tokens JWT.
+Además debe configurar un string aleatorio critpográficamente seguro de por lo menos 32 caracteres en la variable de entorno `SECRET` que será por la generación de tokens JWT.
 
 Para correr la herramienta de forma local simplemente  ejecute `app.py` con su instalación de Python, versión 3.7 o superior. Por defecto la interfaz web estará disponible en el puerto 8080.
