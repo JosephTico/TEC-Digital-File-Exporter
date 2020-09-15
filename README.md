@@ -7,11 +7,11 @@ Servicio que permite exportar el calendario personal disponible en la plataforma
 
 [![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://console.cloud.google.com/cloudshell/editor?shellonly=true&cloudshell_image=gcr.io/cloudrun/button&cloudshell_git_repo=https://github.com/JosephTico/TEC-Digital-Calendar-Exporter.git)
 
-Programado en Python 3. Para instalar todos los requerimientos de la aplicación ejecute el comando:
+Programado en Python 3. Puede ejecutar esta herramienta en un contenedor Docker o manualmente instalando los requerimientos. Para instalar todos los requerimientos de la aplicación ejecute el comando:
 
 ```
 pip  install  -r  requirements.txt
 ```
 Además debe configurar un string aleatorio critpográficamente seguro en la variable de entorno `SECRET` que será por la generación de tokens JWT.
 
-Para correr la herramienta de forma local simplemente  ejecute `app.py` con su instalación de Python, versión 3.7 o superior.
+Para correr la herramienta de forma local simplemente  ejecute `app.py` con su instalación de Python, versión 3.7 o superior. Por defecto la interfaz web estará disponible en el puerto 8080.
