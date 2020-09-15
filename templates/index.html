@@ -109,7 +109,7 @@
                         <p>
                             <a id="cal-google" class="btn btn-primary btn-lg btn-block" target="_blank" href="https://calendar.google.com/calendar/u/0/r?cid=" role="button"><i class="fab fa-google"></i> Agregar a Google Calendar</a>
                             <a id="cal-webcal" class="btn btn-primary btn-lg btn-block" target="_blank" href="webcal://" role="button"><i class="fab fa-apple"></i> Agregar a calendario de Apple</a>
-                            <a id="cal-outlook" class="btn btn-primary btn-lg btn-block" target="_blank" href="https://outlook.live.com/calendar/0/addcalendar" role="button" onclick="alert('Asegúrse de copiar la URL del calendario y luego péguela en la opción Suscribirse desde la web')"><i class="fab fa-microsoft"></i> Agregar a Outlook.com</a>
+                            <a id="cal-outlook" class="btn btn-primary btn-lg btn-block" target="_blank" href="https://outlook.live.com/calendar/0/addcalendar" role="button" onclick="alert('Asegúrse de copiar la URL del calendario y luego péguela en la opción Suscribirse desde la web en la versión de escritorio de Outlook.com.')"><i class="fab fa-microsoft"></i> Agregar a Outlook.com</a>
                             <a id="cal-ics" class="btn btn-primary btn-lg btn-block" download href="#" role="button"><i class="fa fa-download"></i> Descargar .ics para agregar manualmente*</a>
                             <p><i>*Nota: si descarga el archivo .ics para importarlo manualmente deberá volver a repetir este proceso cada vez que quiera actualizar los eventos, por eso son preferibles las otras opciones.</i></p>
                         </p>
@@ -133,8 +133,9 @@
                                             <div id="collapse0" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading0">
                                                 <div class="panel-body px-3 mb-4">
                                                     <p>Primero que nada, NO ingrese sus contraseñas en sitios sospechosos. Esta herramienta solo está disponible en el dominio <mark>tdcal.josvar.com</mark>. Si bien nada me impide a mi como desarrollador recolectar
-                                                        las contraseñas en esta herramienta, las mismas solo son usadas para extraer el calendario del TEC Digital y no son almacenadas en ningún tipo de base de datos.</p>
-                                                    <p>Si tiene algún problema o preocupación, puede leer más detalles técnicos en preguntas posteriores o contactarme <a href="https://twitter.com/JosephTico" target="_blank">vía Twitter</a>.</p>
+                                                        las contraseñas introducidas en esta herramienta, las mismas solo son usadas para extraer el calendario del TEC Digital y <strong>no son almacenadas</strong> en ningún tipo de base de datos. Puede
+                                                        verificar usted mismo el código fuente y más detalles técnicos en la última pregunta.</p>
+                                                    <p>No publico esta herramienta de forma anónima; si tiene algún problema o preocupación también puede contactarme <a href="https://twitter.com/JosephTico" target="_blank">vía Twitter</a>.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -149,8 +150,10 @@
                                             </div>
                                             <div id="collapse1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading1">
                                                 <div class="panel-body px-3 mb-4">
-                                                    <p>Después de agregar el calendario a Google Calendar, para que aparezca en la app debe irse a los ajustes de la app en su teléfono, luego seleccionar el calendario <mark>TEC Digital</mark> (puede necesitar
-                                                        tocar en "Mostrar más) y habilite la opción de sincronización. En esta pantalla también puede habilitar notificaciones para los eventos.</p>
+                                                    <p>Después de agregar el calendario a Google Calendar, para que aparezca en la aplicación debe irse a los <mark>ajustes</mark> de la app de Google Calendar en su dispositivo, luego seleccionar el calendario
+                                                        <mark>TEC Digital</mark> (puede necesitar tocar en <mark>Mostrar más</mark>) y habilite la opción de <mark>sincronización</mark>. En esta pantalla también puede habilitar notificaciones para los
+                                                        eventos.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -165,8 +168,9 @@
                                             </div>
                                             <div id="collapse11" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading11">
                                                 <div class="panel-body px-3 mb-4">
-                                                    <p>Lo más probable es que haya ingresado el usuario o contraseña mal, para verificarlo ingrese manualmente a la <mark>URL del calendario</mark> y verifique que se descargue un archivo .ics sin que aparezca
-                                                        algún error. También es posible que el TEC Digital esté caído..</p>
+                                                    <p>Asegúrese de refrescar los eventos en su aplicación de calendario. Puede durar unos minutos en descargar los datos más recientes del servidor. También es posible que el TEC Digital esté caído y no se
+                                                        pueda generar el calendario.</p>
+                                                    <p>En caso de que le aparezca algún mensaje de error específico, por favor hágamelo saber <a href="https://twitter.com/JosephTico" target="_blank">vía Twitter</a>.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -181,8 +185,8 @@
                                             </div>
                                             <div id="collapse2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading2">
                                                 <div class="panel-body px-3 mb-4">
-                                                    <p>La frecuencia con la que se actualiza su calendario dependerá de la plataforma. En los calendarios de Apple puede elegir la frecuencia al agregar el calendario, pero en Google Calendar los calendarios
-                                                        externos siempre se actualizan cada 8 horas aproximadamente.</p>
+                                                    <p>La frecuencia con la que se actualiza su calendario dependerá de la plataforma que esté usando. En los calendarios de Apple puede elegir la frecuencia al agregar el calendario, pero en Google Calendar
+                                                        los calendarios externos siempre se actualizan cada 8 horas aproximadamente.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -197,8 +201,8 @@
                                             </div>
                                             <div id="collapse3" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading3">
                                                 <div class="panel-body px-3 mb-4">
-                                                    <p>Lamento lo sucedido. Si surge algún problema o error puede contactarme <a href="https://twitter.com/JosephTico" target="_blank">vía Twitter</a> <i>(aunque lo más probable es que no sea culpa de esta
-                                                        herramienta)</i>.</p>
+                                                    <p>Si surge algún problema o error puede contactarme <a href="https://twitter.com/JosephTico" target="_blank">vía Twitter</a> para tratar de arreglarlo. No me hago responsable por conflictos internacionales
+                                                        que puedan iniciar por esta herramienta.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -213,14 +217,16 @@
                                             </div>
                                             <div id="collapse4" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading4">
                                                 <div class="panel-body px-3 mb-4">
-                                                    <p>Si llegó hasta acá es porque es un nerd y le interesa saber cómo funciona o todavía no confía en mi para darme su contraseña del TEC Digital, lo cual es más que entendible.</p>
-                                                    <p>Lo que hace este servicio es iniciar sesión por usted en el TEC Digital, ir a su calendario y convertirlo en un formato compatible con la mayoría de aplicaciones de calendario. Como mencioné anteriormente,
-                                                        las contraseñas no son almacenadas en el servidor y son descartadas apenas se genera el calendario.</p>
-                                                    <p>Al ingresar su usuario y contraseña en el formulario de esta página, se genera un token o código JWT encriptado que contiene su usuario y contraseña y solo puede ser desencriptado por esta herramienta,
-                                                        por lo que incluso si comparte la URL del calendario con alguien más, esa persona no será capaz de obtener sus credenciales, ni siquiera Google o Apple. Estos tokens tampoco son almacenados en el
-                                                        servidor, ninguna información personal o identificable es almacenada.</p>
+                                                    <p>Si llegó hasta acá es porque es un nerd y le interesa saber cómo funciona o todavía no confía en mi lo suficiente para darme su contraseña del TEC Digital, lo cual es más que entendible.</p>
+                                                    <p>Como mencioné anteriormente no publico esto de forma anónima. Doy fé de que el código desplegado en la herramienta en línea <code>tdcal.josvar.com</code> es exactamente el mismo disponible en GitHub
+                                                        y no se recolectan datos de forma maliciosa.</p>
+                                                    <p>Lo que hace este servicio es iniciar sesión por usted en el TEC Digital, ir a su calendario y convertirlo en un formato compatible con la mayoría de aplicaciones de calendario (iCalendar). Las contraseñas
+                                                        no son almacenadas en el servidor y son descartadas apenas se genera el calendario.</p>
+                                                    <p>Al ingresar su usuario y contraseña en el formulario de esta página, se genera un token JWT encriptado que contiene su usuario y contraseña, el cual solo puede ser desencriptado por el servidor que genera
+                                                        el calendario, por lo que incluso si comparte la URL del calendario con alguien más, esa persona no será capaz de obtener su usuario o contraseña, ni siquiera Google o Apple. Estos tokens tampoco
+                                                        son almacenados en el servidor, ninguna información personal o identificable es almacenada.</p>
                                                     <p>Esta herramienta fue programada con Python y se despliega mediante <a href="https://cloud.google.com/run?hl=es" target="_blank">Google Cloud Run</a>. Si lo desea, puede usted mismo desplegar su propia
-                                                        instancia privada si no confía en mi o también acceder al código fuente en GitHub. El código se libera bajo una licencia <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank">GNU AGPLv3</a>.</p>
+                                                        instancia privada si no confía en esta versión y también acceder al código fuente en GitHub. El código se libera bajo una licencia <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank">GNU AGPLv3</a>.</p>
                                                     <a class="btn btn-primary" href="https://github.com/JosephTico/TEC-Digital-Calendar-Exporter" role="button">Ver código fuente en GitHub</a>
 
                                                     <a href="https://console.cloud.google.com/cloudshell/editor?shellonly=true&amp;cloudshell_image=gcr.io/cloudrun/button&amp;cloudshell_git_repo=https://github.com/JosephTico/TEC-Digital-Calendar-Exporter.git"><img src="https://storage.googleapis.com/cloudrun/button.svg" alt="Run on Google Cloud"></a>
