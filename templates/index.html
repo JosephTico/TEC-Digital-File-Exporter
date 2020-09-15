@@ -273,7 +273,7 @@
             $('#loginform').ajaxForm(options);
 
             function requestForm(formData, jqForm, options) {
-                $('#btn-submit').text('Obteniendo calendario...');
+                $('#btn-submit').html('<i class="fas fa-cog fa-spin"></i> Obteniendo calendario...');
                 $('.to-disable').attr('disabled', 'disabled');
             }
 

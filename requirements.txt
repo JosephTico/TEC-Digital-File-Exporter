@@ -5,3 +5,4 @@ ics
 beautifulsoup4
 lxml
 pyjwt
+pycryptodome
