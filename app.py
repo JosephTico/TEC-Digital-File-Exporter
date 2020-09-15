@@ -158,9 +158,6 @@ def read_calendar(token):
             user = data['user']
             password = data['password']
 
-        print(user)
-        print(password)
-
         cal = get_calendar(user, password)
 
         cal = str(cal).replace('PRODID:ics.py - http://git.io/lLljaA', 'X-WR-CALNAME:TEC Digital')
