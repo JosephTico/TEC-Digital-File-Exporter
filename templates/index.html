@@ -260,7 +260,8 @@
         $(function() {
             var options = {
                 beforeSubmit: requestForm, // pre-submit callback
-                success: responseForm // post-submit callback
+                success: responseForm, // post-submit callback
+                error: responseError // post-submit error
             };
 
             $('#loginform').ajaxForm(options);
@@ -268,7 +269,13 @@
             function requestForm(formData, jqForm, options) {
                 $('#btn-submit').text('Obteniendo calendario...');
                 $('.to-disable').attr('disabled', 'disabled');
+            }
 
+            function responseError(xhr, status, error) {
+                alert(xhr.responseText);
+
+                $('#btn-submit').text('Obtener calendario');
+                $('.to-disable').removeAttr('disabled');
             }
 
             function responseForm(responseText, statusText, xhr, $form) {

@@ -7,8 +7,8 @@ from ics import Calendar, Event
 from flask import Flask, request, render_template
 import arrow
 
-# Define un secreto a usar para los tokens, ASEGÚRESE DE LLENAR ESTO CON UN STRING CRIPTOGRÁFICAMENTE SEGURO
-SECRET = ''
+# ASEGÚRESE DE CONFIGURAR LA VARIABLE DE ENTORNO 'SECRET' CON UN STRING ALEATORIO CRIPTOGRÁFICAMENTE SEGURO
+SECRET = os.environ.get('SECRET')
 
 
 def td_login(username, password):
@@ -91,17 +91,30 @@ def index():
 # Generación de tokens JWT
 @app.route('/tokens', methods=['POST'])
 def create_token():
-    user = request.form['user']
-    password = request.form['password']
+    try:
+        if not SECRET:
+            raise Exception("La variable de entorno SECRET no se ha inicializado.")
 
-    encoded_jwt = jwt.encode({'user': user, 'password': password}, SECRET, algorithm='HS256')
+        user = request.form['user'].strip()
+        password = request.form['password'].strip()
 
-    return f'https://tdcal.josvar.com/{encoded_jwt.decode("utf-8")}/cal.ics'
+        encoded_jwt = jwt.encode({'user': user, 'password': password}, SECRET, algorithm='HS256')
+
+        # Intenta obtener el calendario para verificar los datos de inicio de sesión
+        get_calendar(user, password)
+
+        return f'https://tdcal.josvar.com/{encoded_jwt.decode("utf-8")}/cal.ics'
+
+    except Exception as e:
+        return f'Ha ocurrido un error: {e}', 500
 
 # Routa para descargar el calendario tomando un token JWT
 @app.route('/<token>/cal.ics', methods=['GET'])
 def read_calendar(token):
     try:
+        if not SECRET:
+            raise Exception("La variable de entorno SECRET no se ha inicializado.")
+
         data = jwt.decode(token, SECRET, algorithms=['HS256'])
 
         cal = get_calendar(data['user'], data['password'])
