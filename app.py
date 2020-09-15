@@ -25,13 +25,16 @@ def td_login(username, password):
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
 
-    soup = BeautifulSoup(initial_request.content, features='lxml')
+    try:
+        soup = BeautifulSoup(initial_request.content, features='lxml')
 
-    time = soup.find('input', {'name': 'time'}).get('value')
+        time = soup.find('input', {'name': 'time'}).get('value')
 
-    token_id = soup.find('input', {'name': 'token_id'}).get('value')
+        token_id = soup.find('input', {'name': 'token_id'}).get('value')
 
-    tdhash = soup.find('input', {'name': 'hash'}).get('value')
+        tdhash = soup.find('input', {'name': 'hash'}).get('value')
+    except:
+        raise Exception('No se ha podido iniciar sesión, el TEC Digital debe estar caído. Por favor inténtelo de nuevo más tarde.')
 
 
     # Ahora sí hace el request del login
@@ -66,9 +69,12 @@ def get_calendar(user, password):
     # Parsea eventos del HTML
     events = []
 
-    soup = BeautifulSoup(response.content, features='lxml')
-    table = soup.find('table', attrs={'class':'list-table'})
-    table_body = table.find('tbody')
+    try:
+        soup = BeautifulSoup(response.content, features='lxml')
+        table = soup.find('table', attrs={'class':'list-table'})
+        table_body = table.find('tbody')
+    except Exception as e:
+        raise Exception(f'No se ha podido leer su calendario del TEC Digital. Reportar este error. Detalles: {e.message}')
 
     rows = table_body.find_all('tr')
     for row in rows:
