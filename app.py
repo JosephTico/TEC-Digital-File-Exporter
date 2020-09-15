@@ -74,7 +74,7 @@ def get_calendar(user, password):
         table = soup.find('table', attrs={'class':'list-table'})
         table_body = table.find('tbody')
     except Exception as e:
-        raise Exception(f'No se ha podido leer su calendario del TEC Digital. Reportar este error. Detalles: {e.message}')
+        raise Exception('No se ha podido leer su calendario del TEC Digital. Reportar este error. Detalles: ' + str(e))
 
     rows = table_body.find_all('tr')
     for row in rows:
