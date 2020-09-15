@@ -1,6 +1,6 @@
 # TEC Digital Calendar Exporter
 
-Disponible en: [https://tdcal.josvar.com/](https://tdcal.josvar.com/)
+**Disponible en: [https://tdcal.josvar.com/](https://tdcal.josvar.com/)**
 
 Servicio que permite exportar el calendario personal disponible en la plataforma [TEC Digital](https://tecdigital.tec.ac.cr/) del Instituto Tecnológico de Costa Rica al formato iCalendar para su uso en otros servicios, como por ejemplo Google Calendar, Outlook, calendarios de Apple, etc.
 
