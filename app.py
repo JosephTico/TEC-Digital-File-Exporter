@@ -58,7 +58,7 @@ def get_calendar(user, password):
     for row in rows:
         cols = row.find_all('td')
         cols = [ele.text.strip() for ele in cols]
-        events.append([ele for ele in cols if ele]) # Elimina elementos vacíos
+        events.append([ele for ele in cols if ele]) #elimina elementos vacíos
 
     # Crea el iCal
     cal = Calendar()
@@ -66,12 +66,17 @@ def get_calendar(user, password):
     for event_data in events:
         e = Event()
         e.name = f'{event_data[2]} - {event_data[3]}'
-        e.description = event_data[4]
+        # HOTFIX: eventos sin descripción
+        try:
+            e.description = event_data[4]
+        except IndexError:
+            e.description = ""
         date = arrow.get(event_data[0], 'DD MMMM YYYY', locale='es').replace(tzinfo='America/Costa_Rica')
         e.begin = date
         if event_data[1] == 'Evento para todo el día':
             e.make_all_day()
         else:
+            # HOTFIX: el TEC Digital de alguna forma permite horas inválidas, hace eventos all_day si no puede parsear
             try:
                 e.begin = arrow.get(event_data[0] + ' ' + event_data[1][0:5], 'DD MMMM YYYY HH:mm', locale='es').replace(tzinfo='America/Costa_Rica')
                 e.end = arrow.get(event_data[0] + ' ' + event_data[1][8:], 'DD MMMM YYYY HH:mm', locale='es').replace(tzinfo='America/Costa_Rica')
