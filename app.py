@@ -38,7 +38,7 @@ def get_calendar(user, password):
     session = td_login(user, password)
     date = datetime.datetime.today()
     try:
-        response = session.get('https://tecdigital.tec.ac.cr/dotlrn/?date=' + date.strftime('%Y-%m-%d') + '&view=list&page_num=1&period_days=30',
+        response = session.get('https://tecdigital.tec.ac.cr/dotlrn/?date=' + date.strftime('%Y-%m-%d') + '&view=list&page_num=1&period_days=90',
                                allow_redirects=False)
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
