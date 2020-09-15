@@ -1,0 +1,7 @@
+# requirements.txt
+requests
+flask
+ics
+beautifulsoup4
+lxml
+pyjwt
