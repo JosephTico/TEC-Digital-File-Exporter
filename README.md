@@ -5,7 +5,7 @@
 Servicio que permite exportar el calendario personal disponible en la plataforma [TEC Digital](https://tecdigital.tec.ac.cr/) del Instituto Tecnológico de Costa Rica al formato iCalendar para su uso en otros servicios, como por ejemplo Google Calendar, Outlook, calendarios de Apple, etc.
 
 
-[![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://console.cloud.google.com/cloudshell/editor?shellonly=true&cloudshell_image=gcr.io/cloudrun/button&cloudshell_git_repo=https://github.com/JosephTico/TEC-Digital-Calendar-Exporter.git)
+[![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://deploy.cloud.run/?git_repo=https://github.com/JosephTico/TEC-Digital-Calendar-Exporter.git)
 
 Programado en Python 3. Puede ejecutar esta herramienta en un contenedor Docker o manualmente instalando los requerimientos. Para instalar todos los requerimientos de la aplicación ejecute el comando:
 
