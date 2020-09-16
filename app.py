@@ -69,6 +69,9 @@ def get_calendar(user, password):
     # Crea el iCal
     cal = Calendar()
 
+    if len(events) == 0:
+        return cal
+
     for event_data in events:
         e = Event()
         e.name = f'{event_data[2]} - {event_data[3]}'
