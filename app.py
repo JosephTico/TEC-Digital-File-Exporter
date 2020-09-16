@@ -36,12 +36,7 @@ def td_login(username, password):
     data = f'form%3Aid=login&return_url=%2Fdotlrn%2F&time={time}&token_id={token_id}&hash={tdhash}&retoken=allow&username={username}&password={password}'
 
     session = requests.Session()
-    try:
-        session.post('https://tecdigital.tec.ac.cr/register/', data=data, allow_redirects=False, timeout=10)
-    except requests.exceptions.Timeout:
-        raise Exception('El TEC Digital está caído. Por favor inténtelo de nuevo más tarde.')
-    except requests.exceptions.RequestException as e:
-        raise SystemExit(e)
+    session.post('https://tecdigital.tec.ac.cr/register/', data=data, allow_redirects=False, timeout=10)
 
     return session
 
