@@ -13,8 +13,6 @@ import arrow
 # ASEGÚRESE DE CONFIGURAR LA VARIABLE DE ENTORNO 'SECRET' CON UN STRING ALEATORIO CRIPTOGRÁFICAMENTE SEGURO
 SECRET = os.environ.get('SECRET')
 
-
-
 def td_login(username, password):
 
     # Obtiene los tokens de login iniciales
@@ -47,6 +45,7 @@ def get_calendar(user, password):
     response = session.get('https://tecdigital.tec.ac.cr/dotlrn/?date=' + date.strftime('%Y-%m-%d') + '&view=list&page_num=1&period_days=90',
                                allow_redirects=False, timeout=10)
 
+    # Decidí usar EnvironmentError para erorres de datos de login
     if response.status_code != 200:
         raise EnvironmentError('Los datos son incorrectos o el TEC Digital está caído.')
 
@@ -116,6 +115,7 @@ def create_token():
         # Intenta obtener el calendario para verificar los datos de inicio de sesión
         get_calendar(user, password)
 
+        # Inicializa AES con un IV aleatorio, se limita la llave de encriptación a 32 bytes / 256 bits
         iv = get_random_bytes(16)
         cipher = AES.new(SECRET[0:32].encode('utf-8'), AES.MODE_CFB, iv)
 
@@ -124,9 +124,7 @@ def create_token():
         password = b64encode(cipher.encrypt(password.encode('utf-8'))).decode('utf-8')
         iv = b64encode(iv).decode('utf-8')
 
-
         encoded_jwt = jwt.encode({'user': user, 'password': password, 'iv': iv}, SECRET, algorithm='HS256')
-
 
         return f'https://tdcal.josvar.com/{encoded_jwt.decode("utf-8")}/cal.ics'
 
@@ -139,7 +137,7 @@ def create_token():
     except Exception as e:
         return f'Ha ocurrido un error: {e}', 500
 
-# Routa para descargar el calendario tomando un token JWT
+# Ruta para descargar el calendario tomando un token JWT
 @app.route('/<token>/cal.ics', methods=['GET'])
 def read_calendar(token):
     try:
@@ -147,6 +145,7 @@ def read_calendar(token):
             raise Exception("La variable de entorno SECRET no se ha inicializado.")
 
         data = jwt.decode(token, SECRET, algorithms=['HS256'])
+
         if "iv" in data:
             cipher = AES.new(SECRET[0:32].encode('utf-8'), AES.MODE_CFB, b64decode(data['iv']))
             user = cipher.decrypt(b64decode(data['user'])).decode('utf-8')
@@ -157,6 +156,7 @@ def read_calendar(token):
 
         cal = get_calendar(user, password)
 
+        # HOTFIX: Agrego manualmente el nombre del cal al ics ya que la biblioteca no lo soporta
         cal = str(cal).replace('PRODID:ics.py - http://git.io/lLljaA', 'X-WR-CALNAME:TEC Digital')
 
         return str(cal), 200, {'Content-Type': 'text/calendar; charset=utf-8'}
