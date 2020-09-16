@@ -50,6 +50,9 @@ def get_calendar(user, password):
         raise EnvironmentError('Los datos son incorrectos o el TEC Digital está caído.')
 
 
+    # Crea el iCal
+    cal = Calendar()
+
     # Parsea eventos del HTML
     events = []
 
@@ -60,19 +63,21 @@ def get_calendar(user, password):
     except Exception as e:
         raise Exception('No se ha podido leer su calendario del TEC Digital. Reportar este error. Detalles: ' + str(e))
 
-    rows = table_body.find_all('tr')
-    for row in rows:
-        cols = row.find_all('td')
-        cols = [ele.text.strip() for ele in cols]
-        events.append([ele for ele in cols if ele]) #elimina elementos vacíos
+    try:
+        rows = table_body.find_all('tr')
+        for row in rows:
+            cols = row.find_all('td')
+            cols = [ele.text.strip() for ele in cols]
+            events.append([ele for ele in cols if ele]) #elimina elementos vacíos
+    except Exception as e:
+        # En caso de calendario vacío
+        raise Exception('No se ha podido parsear el calendario. Por favor reportar este error. Detalles: ' + str(e))
 
-    # Crea el iCal
-    cal = Calendar()
-
-    if len(events) == 0:
-        return cal
 
     for event_data in events:
+        if len(event_data) < 4:
+            continue
+
         e = Event()
         e.name = f'{event_data[2]} - {event_data[3]}'
         # HOTFIX: eventos sin descripción
