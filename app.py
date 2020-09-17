@@ -70,11 +70,11 @@ def get_calendar(user, password):
             cols = [ele.text.strip() for ele in cols]
             events.append([ele for ele in cols if ele]) #elimina elementos vacíos
     except Exception as e:
-        # En caso de calendario vacío
         raise Exception('No se ha podido parsear el calendario. Por favor reportar este error. Detalles: ' + str(e))
 
 
     for event_data in events:
+        # Comprobación necesaria en caso de calendario vacío
         if len(event_data) < 4:
             continue
 
