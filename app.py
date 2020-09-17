@@ -167,7 +167,7 @@ def read_calendar(token):
         # HOTFIX: Agrego manualmente el nombre del cal al ics ya que la biblioteca no lo soporta
         cal = str(cal).replace('PRODID:ics.py - http://git.io/lLljaA', 'X-WR-CALNAME:TEC Digital')
 
-        return str(cal), 200, {'Content-Type': 'text/calendar; charset=utf-8'}
+        return cal, 200, {'Content-Type': 'text/calendar; charset=utf-8'}
 
     except requests.exceptions.Timeout:
         return 'El TEC Digital está caído. Por favor inténtelo de nuevo más tarde.', 503
