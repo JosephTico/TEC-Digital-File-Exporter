@@ -1,17 +1,17 @@
-# TEC Digital Calendar Exporter
+# TEC Digital Files Exporter
 
-**Disponible en: [https://tdcal.josvar.com/](https://tdcal.josvar.com/)**
+Script que permite exportar los archivos de cursos del [TEC Digital](https://tecdigital.tec.ac.cr/) del Instituto Tecnológico de Costa Rica, debido al borrado masivo de archivos que va a ocurrir el 31 de enero de 2021.
 
-Servicio que permite exportar el calendario personal disponible en la plataforma [TEC Digital](https://tecdigital.tec.ac.cr/) del Instituto Tecnológico de Costa Rica al formato iCalendar para su uso en otros servicios, como por ejemplo Google Calendar, Outlook, calendarios de Apple, etc.
-
-
-[![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://deploy.cloud.run/?git_repo=https://github.com/JosephTico/TEC-Digital-Calendar-Exporter.git)
-
-Programado en Python 3. Puede ejecutar esta herramienta en un contenedor Docker o manualmente instalando los requerimientos. Para instalar todos los requerimientos de la aplicación ejecute el comando:
+Para podere ejecutar este script necesita tener instalado Python 3.7 o superior. Clone este repositorio en la carpeta que desee trabajar e instale los requerimientos, ejecutando el comando:
 
 ```
 pip  install  -r  requirements.txt
 ```
-Además debe configurar un string aleatorio critpográficamente seguro de por lo menos 32 caracteres en la variable de entorno `SECRET` que será usada por la generación de tokens y encriptación.
+(Nota: Dependiendo de su instalación puede requerir correr `pip3` en lugar de `pip`)
 
-Para correr la herramienta de forma local simplemente  ejecute `app.py` con su instalación de Python, versión 3.7 o superior. Por defecto la interfaz web estará disponible en el puerto 8080.
+Para correr el script simplemente ejecute el script `app.py` con su instalación de Python.
+```
+python app.py
+```
+
+Este script fue programado rápidamente en una hora. Ignore las posibles malas prácticas de programación :)

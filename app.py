@@ -1,20 +1,48 @@
 import os
+import sys
 import datetime
 from base64 import b64encode, b64decode
 import requests
-import jwt
+import re
+import threading
+import urllib.request
+import getpass
+import zipfile
 from bs4 import BeautifulSoup
-from ics import Calendar, Event
-from flask import Flask, request, render_template
-from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
-import arrow
+from progress.spinner import PixelSpinner
+from progress.bar import Bar
+from tqdm import tqdm
+
+
 
 # ASEGÚRESE DE CONFIGURAR LA VARIABLE DE ENTORNO 'SECRET' CON UN STRING ALEATORIO CRIPTOGRÁFICAMENTE SEGURO
 SECRET = os.environ.get('SECRET')
+session = requests.Session()
+globalError = False
+semestres_final = []
+dirname = os.path.dirname(__file__)
+
+
+class DownloadProgressBar(tqdm):
+    def update_to(self, b=1, bsize=1, tsize=None):
+        if tsize is not None:
+            self.total = tsize
+        self.update(b * bsize - self.n)
+
+
+def download_url(url, output_path):
+    with DownloadProgressBar(unit='B', unit_scale=True,
+                             miniters=1, desc=url.split('/')[-1]) as t:
+        urllib.request.urlretrieve(url, filename=output_path, reporthook=t.update_to)
+
+def print_error(msg):
+    global globalError
+    globalError = True
+    print("\n\nERROR: " + msg)
+    sys.exit(2)
 
 def td_login(username, password):
-
+    global session
     # Obtiene los tokens de login iniciales
     initial_request = requests.get('https://tecdigital.tec.ac.cr/register/?return_url=%2fdotlrn%2f', timeout=10)
 
@@ -27,156 +55,186 @@ def td_login(username, password):
 
         tdhash = soup.find('input', {'name': 'hash'}).get('value')
     except:
-        raise Exception('No se ha podido iniciar sesión, el TEC Digital debe estar caído. Por favor inténtelo de nuevo más tarde.')
+        print_error('No se ha podido iniciar sesión, el TEC Digital debe estar caído. Por favor inténtelo de nuevo más tarde.')
 
 
     # Ahora sí hace el request del login
     data = f'form%3Aid=login&return_url=%2Fdotlrn%2F&time={time}&token_id={token_id}&hash={tdhash}&retoken=allow&username={username}&password={password}'
 
-    session = requests.Session()
     session.post('https://tecdigital.tec.ac.cr/register/', data=data, allow_redirects=False, timeout=10)
+
+    # Verifica login
+    response = session.get('https://tecdigital.tec.ac.cr/dotlrn/courses', allow_redirects=False, timeout=10)
+    if response.status_code != 200:
+        print_error('Los datos son incorrectos o el TEC Digital está caído.')
 
     return session
 
-def get_calendar(user, password):
-    # Verifica inicio de sesión correcto
-    session = td_login(user, password)
-    date = datetime.datetime.today()
-    response = session.get('https://tecdigital.tec.ac.cr/dotlrn/?date=' + date.strftime('%Y-%m-%d') + '&view=list&page_num=1&period_days=90',
-                               allow_redirects=False, timeout=10)
 
-    # Decidí usar EnvironmentError para erorres de datos de login
-    if response.status_code != 200:
-        raise EnvironmentError('Los datos son incorrectos o el TEC Digital está caído.')
+def obtener_cursos():
+    global session, globalError, semestres_final
 
+    base = "https://tecdigital.tec.ac.cr"
 
-    # Crea el iCal
-    cal = Calendar()
-
-    # Parsea eventos del HTML
-    events = []
-
-    try:
-        soup = BeautifulSoup(response.content, features='lxml')
-        table = soup.find('table', attrs={'class':'list-table'})
-        table_body = table.find('tbody')
-    except Exception as e:
-        raise Exception('No se ha podido leer su calendario del TEC Digital. Reportar este error. Detalles: ' + str(e))
-
-    try:
-        rows = table_body.find_all('tr')
-        for row in rows:
-            cols = row.find_all('td')
-            cols = [ele.text.strip() for ele in cols]
-            events.append([ele for ele in cols if ele]) #elimina elementos vacíos
-    except Exception as e:
-        raise Exception('No se ha podido parsear el calendario. Por favor reportar este error. Detalles: ' + str(e))
+    cursos_page = session.get('https://tecdigital.tec.ac.cr/dotlrn/courses', allow_redirects=True, timeout=10)
+    
+    soup = BeautifulSoup(cursos_page.content, features='lxml')
+    cursos_html = soup.select_one("#main-content .portlet ul")
+    semestres_html = cursos_html.find_all("li")
 
 
-    for event_data in events:
-        # Comprobación necesaria en caso de calendario vacío
-        if len(event_data) < 4:
+    for semestre in tqdm(semestres_html):
+        titulo_semestre = semestre.find(text=True, recursive=False).strip()
+
+        if "2020" in titulo_semestre or not titulo_semestre:
             continue
 
-        e = Event()
-        e.name = f'{event_data[2]} - {event_data[3]}'
-        # HOTFIX: eventos sin descripción
-        try:
-            e.description = event_data[4].replace('Pulse aquí para ir a', 'Puede encontrar más detalles en')
-        except IndexError:
-            e.description = ""
-        date = arrow.get(event_data[0], 'DD MMMM YYYY', locale='es').replace(tzinfo='America/Costa_Rica')
-        e.begin = date
-        if event_data[1] == 'Evento para todo el día':
-            e.make_all_day()
+        cursos = []
+
+        cursos_soup = semestre.find_all("li")
+
+        for curso in cursos_soup:
+            titulo_curso = curso.text.strip()
+            url = base + curso.find("a", href=True)['href'].strip() + "file-storage"
+
+            folder_page = session.get(url, allow_redirects=True, timeout=10)
+            regex = re.compile(r"\$rootScope\.GL_FOLDER_ID = ([0-9]*);")
+            folder_id = re.search(regex, folder_page.content.decode('utf-8')).group(1)
+
+
+            cursos.append({"titulo": titulo_curso, "url": url, "folder_id": folder_id})
+
+
+        data_semestre = {"titulo": titulo_semestre, "cursos": cursos}
+        semestres_final.append(data_semestre)
+        
+
+# Obtenido de https://stackoverflow.com/questions/3041986/apt-command-line-interface-like-yes-no-input     
+def query_yes_no(question, default="yes"):
+    """Ask a yes/no question via raw_input() and return their answer.
+
+    "question" is a string that is presented to the user.
+    "default" is the presumed answer if the user just hits <Enter>.
+        It must be "yes" (the default), "no" or None (meaning
+        an answer is required of the user).
+
+    The "answer" return value is True for "yes" or False for "no".
+    """
+    valid = {"yes": True, "y": True, "ye": True,
+             "no": False, "n": False}
+    if default is None:
+        prompt = " [y/n] "
+    elif default == "yes":
+        prompt = " [Y/n] "
+    elif default == "no":
+        prompt = " [y/N] "
+    else:
+        raise ValueError("invalid default answer: '%s'" % default)
+
+    while True:
+        sys.stdout.write(question + prompt)
+        choice = input().lower()
+        if default is not None and choice == '':
+            return valid[default]
+        elif choice in valid:
+            return valid[choice]
         else:
-            # HOTFIX: el TEC Digital de alguna forma permite horas inválidas, hace eventos all_day si no puede parsear
-            try:
-                e.begin = arrow.get(event_data[0] + ' ' + event_data[1][0:5], 'DD MMMM YYYY HH:mm', locale='es').replace(tzinfo='America/Costa_Rica')
-                e.end = arrow.get(event_data[0] + ' ' + event_data[1][8:], 'DD MMMM YYYY HH:mm', locale='es').replace(tzinfo='America/Costa_Rica')
-            except:
-                e.make_all_day()
-        cal.events.add(e)
-
-    return cal
+            sys.stdout.write("Responda con 'yes' o 'no' "
+                             "(o 'y' o 'n').\n")
 
 
-# Carga Flask
-app = Flask(__name__)
+
+def cli_login():
+    global session, globalError, semestres_final
+    art = """
+_____ __     __   __ ___           ___    __  __  ________ __  
+||__ /  `   |  \|/ _`|| /\ |      |__ \_/|__)/  \|__)||__ |__) 
+||___\__,   |__/|\__>||/~~\|___   |___/ \|   \__/|  \||___|  \ """
+    print(art)
+    print("Exportador de archivos del TEC Digital")
+    print("Creado por Joseph Vargas - https://twitter.com/JosephTico\n\n")
+    print("Ingrese sus credenciales del TEC Digital y presione Enter.")
+    username = input("Usuario: ").strip()
+    password = getpass.getpass("Contraseña: ")
+   
+
+    spinner = PixelSpinner('Iniciando sesión... ')
+
+    thread = threading.Thread(target=td_login,args=(username,password))
+    thread.start()
+
+    while thread.is_alive() and globalError == False:
+        spinner.next()
+    
+    thread.join()
+
+    if globalError:
+        return
+
+    print("\n")
 
 
-# Página principal
-@app.route("/")
-def index():
-    return render_template("index.html")
+    print('Obteniendo cursos... ')
 
-# Generación de tokens JWT
-@app.route('/tokens', methods=['POST'])
-def create_token():
-    try:
-        if not SECRET:
-            raise Exception("La variable de entorno SECRET no se ha inicializado.")
+    thread = threading.Thread(target=obtener_cursos)
+    thread.start()
 
-        user = request.form['user'].strip()
-        password = request.form['password'].strip()
+    thread.join()
 
-        # Intenta obtener el calendario para verificar los datos de inicio de sesión
-        get_calendar(user, password)
+    if globalError:
+        return
 
-        # Inicializa AES con un IV aleatorio, se limita la llave de encriptación a 32 bytes / 256 bits
-        iv = get_random_bytes(16)
-        cipher = AES.new(SECRET[0:32].encode('utf-8'), AES.MODE_CFB, iv)
+    print("\n")
 
-        # Prepara strings seguros
-        user = b64encode(cipher.encrypt(user.encode('utf-8'))).decode('utf-8')
-        password = b64encode(cipher.encrypt(password.encode('utf-8'))).decode('utf-8')
-        iv = b64encode(iv).decode('utf-8')
+    print("Se han cargado satisfactoriamente los siguientes cursos:")
 
-        encoded_jwt = jwt.encode({'user': user, 'password': password, 'iv': iv}, SECRET, algorithm='HS256')
+    for semestre in semestres_final:
+        print("# " + semestre["titulo"])
 
-        return f'https://tdcal.josvar.com/{encoded_jwt.decode("utf-8")}/cal.ics'
+        for curso in semestre["cursos"]:
+            print("-- " + curso["titulo"])
 
-    except EnvironmentError as e:
-        return f'Ha ocurrido un error: {e}', 400
+        print("\n")
 
-    except requests.exceptions.Timeout:
-        return 'El TEC Digital está caído. Por favor inténtelo de nuevo más tarde.', 503
-
-    except Exception as e:
-        return f'Ha ocurrido un error: {e}', 500
-
-# Ruta para descargar el calendario tomando un token JWT
-@app.route('/<token>/cal.ics', methods=['GET'])
-def read_calendar(token):
-    try:
-        if not SECRET:
-            raise Exception("La variable de entorno SECRET no se ha inicializado.")
-
-        data = jwt.decode(token, SECRET, algorithms=['HS256'])
-
-        if "iv" in data:
-            cipher = AES.new(SECRET[0:32].encode('utf-8'), AES.MODE_CFB, b64decode(data['iv']))
-            user = cipher.decrypt(b64decode(data['user'])).decode('utf-8')
-            password = cipher.decrypt(b64decode(data['password'])).decode('utf-8')
-        else:
-            user = data['user']
-            password = data['password']
-
-        cal = get_calendar(user, password)
-
-        # HOTFIX: Agrego manualmente el nombre del cal al ics ya que la biblioteca no lo soporta
-        cal = str(cal).replace('PRODID:ics.py - http://git.io/lLljaA', 'X-WR-CALNAME:TEC Digital')
-
-        return cal, 200, {'Content-Type': 'text/calendar; charset=utf-8'}
-
-    except requests.exceptions.Timeout:
-        return 'El TEC Digital está caído. Por favor inténtelo de nuevo más tarde.', 503
-
-    except Exception as e:
-        return f'Ha ocurrido un error: {e}', 500
+    if not query_yes_no("¿Desea iniciar la descarga de todos los archivos en la carpeta actual?"):
+        return
 
 
-# Inicialización Flask
-port = int(os.environ.get('PORT', 8080))
+    for semestre in semestres_final:
+        print("Descargando cursos de " + semestre["titulo"] + "...")
+        
+        if not os.path.exists(semestre["titulo"]):
+            os.makedirs(semestre["titulo"])
+
+        for curso in semestre["cursos"]:
+            print("Descargando archivos de " + curso["titulo"] + "...")
+
+            url = curso["url"] + "/download-archive?object_id=" + curso["folder_id"]
+            response = session.get(url, stream=True)
+            total_size_in_bytes= int(response.headers.get('content-length', 0))
+            block_size = 1024 #1 Kibibyte
+            progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True)
+            filename = os.path.join(dirname, semestre["titulo"], curso["titulo"] + ".zip")
+            with open(filename, 'wb') as file:
+                for data in response.iter_content(block_size):
+                    progress_bar.update(len(data))
+                    file.write(data)
+            if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
+                print_error("Ha ocurrido un error al descargar el archivo.")
+
+            with zipfile.ZipFile(filename,"r") as zip_ref:
+                zip_ref.extractall(os.path.join(dirname, semestre["titulo"]))
+
+            os.remove(filename)
+
+            progress_bar.close()
+
+
+
+
+        print("\n")
+        print("Proceso finalizado.")
+
+
 if __name__ == '__main__':
-    app.run(threaded=True, host='0.0.0.0', port=port)
+    cli_login()
