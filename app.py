@@ -29,10 +29,10 @@ class DownloadProgressBar(tqdm):
 
 
 def download_url(url, output_path):
-    with DownloadProgressBar(unit='B', unit_scale=True,
-                             miniters=1, desc=url.split('/')[-1]) as t:
-        urllib.request.urlretrieve(
-            url, filename=output_path, reporthook=t.update_to)
+    with DownloadProgressBar(
+        unit="B", unit_scale=True, miniters=1, desc=url.split("/")[-1]
+    ) as t:
+        urllib.request.urlretrieve(url, filename=output_path, reporthook=t.update_to)
 
 
 def print_error(msg):
@@ -46,31 +46,38 @@ def td_login(username, password):
     global session
     # Obtiene los tokens de login iniciales
     initial_request = requests.get(
-        'https://tecdigital.tec.ac.cr/register/?return_url=%2fdotlrn%2f', timeout=10)
+        "https://tecdigital.tec.ac.cr/register/?return_url=%2fdotlrn%2f", timeout=10
+    )
 
     try:
-        soup = BeautifulSoup(initial_request.content, features='lxml')
+        soup = BeautifulSoup(initial_request.content, features="lxml")
 
-        time = soup.find('input', {'name': 'time'}).get('value')
+        time = soup.find("input", {"name": "time"}).get("value")
 
-        token_id = soup.find('input', {'name': 'token_id'}).get('value')
+        token_id = soup.find("input", {"name": "token_id"}).get("value")
 
-        tdhash = soup.find('input', {'name': 'hash'}).get('value')
+        tdhash = soup.find("input", {"name": "hash"}).get("value")
     except:
         print_error(
-            'No se ha podido iniciar sesión, el TEC Digital debe estar caído. Por favor inténtelo de nuevo más tarde.')
+            "No se ha podido iniciar sesión, el TEC Digital debe estar caído. Por favor inténtelo de nuevo más tarde."
+        )
 
     # Ahora sí hace el request del login
-    data = f'form%3Aid=login&return_url=%2Fdotlrn%2F&time={time}&token_id={token_id}&hash={tdhash}&retoken=allow&username={username}&password={password}'
+    data = f"form%3Aid=login&return_url=%2Fdotlrn%2F&time={time}&token_id={token_id}&hash={tdhash}&retoken=allow&username={username}&password={password}"
 
-    session.post('https://tecdigital.tec.ac.cr/register/',
-                 data=data, allow_redirects=False, timeout=10)
+    session.post(
+        "https://tecdigital.tec.ac.cr/register/",
+        data=data,
+        allow_redirects=False,
+        timeout=10,
+    )
 
     # Verifica login
     response = session.get(
-        'https://tecdigital.tec.ac.cr/dotlrn/courses', allow_redirects=False, timeout=10)
+        "https://tecdigital.tec.ac.cr/dotlrn/courses", allow_redirects=False, timeout=10
+    )
     if response.status_code != 200:
-        print_error('Los datos son incorrectos o el TEC Digital está caído.')
+        print_error("Los datos son incorrectos o el TEC Digital está caído.")
 
     return session
 
@@ -81,9 +88,10 @@ def obtener_cursos():
     base = "https://tecdigital.tec.ac.cr"
 
     cursos_page = session.get(
-        'https://tecdigital.tec.ac.cr/dotlrn/courses', allow_redirects=True, timeout=10)
+        "https://tecdigital.tec.ac.cr/dotlrn/courses", allow_redirects=True, timeout=10
+    )
 
-    soup = BeautifulSoup(cursos_page.content, features='lxml')
+    soup = BeautifulSoup(cursos_page.content, features="lxml")
     cursos_html = soup.select_one("#main-content .portlet ul")
     semestres_html = cursos_html.find_all("li")
 
@@ -99,16 +107,13 @@ def obtener_cursos():
 
         for curso in cursos_soup:
             titulo_curso = curso.text.strip()
-            url = base + \
-                curso.find("a", href=True)['href'].strip() + "file-storage"
+            url = base + curso.find("a", href=True)["href"].strip() + "file-storage"
 
             folder_page = session.get(url, allow_redirects=True, timeout=10)
             regex = re.compile(r"\$rootScope\.GL_FOLDER_ID = ([0-9]*);")
-            folder_id = re.search(
-                regex, folder_page.content.decode('utf-8')).group(1)
+            folder_id = re.search(regex, folder_page.content.decode("utf-8")).group(1)
 
-            cursos.append(
-                {"titulo": titulo_curso, "url": url, "folder_id": folder_id})
+            cursos.append({"titulo": titulo_curso, "url": url, "folder_id": folder_id})
 
         data_semestre = {"titulo": titulo_semestre, "cursos": cursos}
         semestres_final.append(data_semestre)
@@ -125,8 +130,7 @@ def query_yes_no(question, default="yes"):
 
     The "answer" return value is True for "yes" or False for "no".
     """
-    valid = {"yes": True, "y": True, "ye": True,
-             "no": False, "n": False}
+    valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
     if default is None:
         prompt = " [y/n] "
     elif default == "yes":
@@ -139,13 +143,12 @@ def query_yes_no(question, default="yes"):
     while True:
         sys.stdout.write(question + prompt)
         choice = input().lower()
-        if default is not None and choice == '':
+        if default is not None and choice == "":
             return valid[default]
         elif choice in valid:
             return valid[choice]
         else:
-            sys.stdout.write("Responda con 'yes' o 'no' "
-                             "(o 'y' o 'n').\n")
+            sys.stdout.write("Responda con 'yes' o 'no' " "(o 'y' o 'n').\n")
 
 
 def cli_login():
@@ -159,16 +162,16 @@ _____ __     __   __ ___           ___    __  __  ________ __
     print("Creado por Joseph Vargas - https://twitter.com/JosephTico\n\n")
     print("Ingrese sus credenciales del TEC Digital y presione Enter.")
     if "USERNAME" in environ:
-        username = environ.get('USERNAME')
+        username = environ.get("USERNAME")
     else:
         username = input("Usuario: ").strip()
 
     if "PASSWORD" in environ:
-        password = environ.get('PASSWORD')
+        password = environ.get("PASSWORD")
     else:
         password = getpass.getpass("Contraseña: ")
 
-    spinner = PixelSpinner('Iniciando sesión... ')
+    spinner = PixelSpinner("Iniciando sesión... ")
 
     thread = threading.Thread(target=td_login, args=(username, password))
     thread.start()
@@ -183,7 +186,7 @@ _____ __     __   __ ___           ___    __  __  ________ __
 
     print("\n")
 
-    print('Obteniendo cursos... ')
+    print("Obteniendo cursos... ")
 
     thread = threading.Thread(target=obtener_cursos)
     thread.start()
@@ -205,7 +208,9 @@ _____ __     __   __ ___           ___    __  __  ________ __
 
         print("\n")
 
-    if "AUTO_DOWNLOAD" not in environ and not query_yes_no("¿Desea iniciar la descarga de todos los archivos en la carpeta actual?"):
+    if "AUTO_DOWNLOAD" not in environ and not query_yes_no(
+        "¿Desea iniciar la descarga de todos los archivos en la carpeta actual?"
+    ):
         return
 
     for semestre in semestres_final:
@@ -217,17 +222,15 @@ _____ __     __   __ ___           ___    __  __  ________ __
         for curso in semestre["cursos"]:
             print("Descargando archivos de " + curso["titulo"] + "...")
 
-            url = curso["url"] + "/download-archive?object_id=" + \
-                curso["folder_id"]
+            url = curso["url"] + "/download-archive?object_id=" + curso["folder_id"]
             response = session.get(url, stream=True)
-            total_size_in_bytes = int(
-                response.headers.get('content-length', 0))
+            total_size_in_bytes = int(response.headers.get("content-length", 0))
             block_size = 1024  # 1 Kibibyte
-            progress_bar = tqdm(total=total_size_in_bytes,
-                                unit='iB', unit_scale=True)
+            progress_bar = tqdm(total=total_size_in_bytes, unit="iB", unit_scale=True)
             filename = os.path.join(
-                dirname, semestre["titulo"], curso["titulo"] + ".zip")
-            with open(filename, 'wb') as file:
+                dirname, semestre["titulo"], curso["titulo"] + ".zip"
+            )
+            with open(filename, "wb") as file:
                 for data in response.iter_content(block_size):
                     progress_bar.update(len(data))
                     file.write(data)
@@ -245,5 +248,5 @@ _____ __     __   __ ___           ___    __  __  ________ __
         print("Proceso finalizado.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli_login()
