@@ -15,3 +15,18 @@ python app.py
 ```
 
 Este script fue programado rápidamente en una hora. Ignore las posibles malas prácticas de programación :)
+
+## Docker (La manera mas rapida si tiene Linux)
+
+```bash
+docker run -it -v $(pwd)/download:/download -e TEC_USERNAME=<CARNE> -e TEC_PASSWORD=<PIN> paroque28/tecdigitialsync
+```
+Sus archivos se guardaran en la carpeta actual dentro del directorio download.
+
+Si necesita instalar docker: https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+
+## Docker paso por paso
+```bash
+docker build . -t tecdigitalsync
+docker run -it git pius-v $(pwd)/download:/download -e TEC_USERNAME=<CARNE> -e TEC_PASSWORD=<PIN> tecdigitalsync
+```

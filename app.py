@@ -12,15 +12,13 @@ from bs4 import BeautifulSoup
 from progress.spinner import PixelSpinner
 from progress.bar import Bar
 from tqdm import tqdm
+from os import environ
 
 
-
-# ASEGÚRESE DE CONFIGURAR LA VARIABLE DE ENTORNO 'SECRET' CON UN STRING ALEATORIO CRIPTOGRÁFICAMENTE SEGURO
-SECRET = os.environ.get('SECRET')
 session = requests.Session()
 globalError = False
 semestres_final = []
-dirname = os.path.dirname(__file__)
+dirname = os.getcwd()
 
 
 class DownloadProgressBar(tqdm):
@@ -154,8 +152,15 @@ _____ __     __   __ ___           ___    __  __  ________ __
     print("Exportador de archivos del TEC Digital")
     print("Creado por Joseph Vargas - https://twitter.com/JosephTico\n\n")
     print("Ingrese sus credenciales del TEC Digital y presione Enter.")
-    username = input("Usuario: ").strip()
-    password = getpass.getpass("Contraseña: ")
+    if "TEC_USERNAME" in environ:
+        username = environ.get('TEC_USERNAME')
+    else:
+        username = input("Usuario: ").strip()
+
+    if "TEC_PASSWORD" in environ:
+        password = environ.get('TEC_PASSWORD')
+    else:
+        password = getpass.getpass("Contraseña: ")
    
 
     spinner = PixelSpinner('Iniciando sesión... ')
@@ -196,7 +201,7 @@ _____ __     __   __ ___           ___    __  __  ________ __
 
         print("\n")
 
-    if not query_yes_no("¿Desea iniciar la descarga de todos los archivos en la carpeta actual?"):
+    if "AUTO_DOWNLOAD" not in environ and not query_yes_no("¿Desea iniciar la descarga de todos los archivos en la carpeta actual?"):
         return
 
 
@@ -207,31 +212,38 @@ _____ __     __   __ ___           ___    __  __  ________ __
             os.makedirs(semestre["titulo"])
 
         for curso in semestre["cursos"]:
-            print("Descargando archivos de " + curso["titulo"] + "...")
+            for attempt in range(5):
+                try:
+                    print("Descargando archivos de " + curso["titulo"] + "...")
 
-            url = curso["url"] + "/download-archive?object_id=" + curso["folder_id"]
-            response = session.get(url, stream=True)
-            total_size_in_bytes= int(response.headers.get('content-length', 0))
-            block_size = 1024 #1 Kibibyte
-            progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True)
-            filename = os.path.join(dirname, semestre["titulo"], curso["titulo"] + ".zip")
-            with open(filename, 'wb') as file:
-                for data in response.iter_content(block_size):
-                    progress_bar.update(len(data))
-                    file.write(data)
-            if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
-                print_error("Ha ocurrido un error al descargar el archivo.")
-            
-            try:
-                with zipfile.ZipFile(filename,"r") as zip_ref:
-                    zip_ref.extractall(os.path.join(dirname, semestre["titulo"]))
-            except:
-                print("El archivo de este curso no se ha podido descomprimir y se mantendrá así.")
+                    url = curso["url"] + "/download-archive?object_id=" + curso["folder_id"]
+                    response = session.get(url, stream=True)
+                    total_size_in_bytes= int(response.headers.get('content-length', 0))
+                    block_size = 1024 #1 Kibibyte
+                    progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True)
+                    filename = os.path.join(dirname, semestre["titulo"], curso["titulo"] + ".zip")
+                    with open(filename, 'wb') as file:
+                        for data in response.iter_content(block_size):
+                            progress_bar.update(len(data))
+                            file.write(data)
+                    if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
+                        raise Exception('Error al descargar el archivo.')
+
+                    with zipfile.ZipFile(filename,"r") as zip_ref:
+                        zip_ref.extractall(os.path.join(dirname, semestre["titulo"]))
+
+                    os.remove(filename)
+
+                    progress_bar.close()
+                except KeyboardInterrupt:
+                    sys.exit()
+                except:
+                    print("\n\nERROR: Error al descargar el archivo. \nReintentando...") 
+                else:
+                    break
             else:
-                os.remove(filename)
-
-            progress_bar.close()
-
+                print("Ha ocurrido un error al descargar el curso " + curso["titulo"] + ".\nSaltando...")
+            
 
 
     print("\n")
