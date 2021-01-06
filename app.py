@@ -30,10 +30,13 @@ class DownloadProgressBar(tqdm):
 
 
 def download_url(url, output_path):
-    with DownloadProgressBar(
-        unit="B", unit_scale=True, miniters=1, desc=url.split("/")[-1]
-    ) as t:
-        urllib.request.urlretrieve(url, filename=output_path, reporthook=t.update_to)
+    with DownloadProgressBar(unit="B",
+                             unit_scale=True,
+                             miniters=1,
+                             desc=url.split("/")[-1]) as t:
+        urllib.request.urlretrieve(url,
+                                   filename=output_path,
+                                   reporthook=t.update_to)
 
 
 def print_error(msg):
@@ -47,8 +50,8 @@ def td_login(username, password):
     global session
     # Obtiene los tokens de login iniciales
     initial_request = requests.get(
-        "https://tecdigital.tec.ac.cr/register/?return_url=%2fdotlrn%2f", timeout=10
-    )
+        "https://tecdigital.tec.ac.cr/register/?return_url=%2fdotlrn%2f",
+        timeout=10)
 
     try:
         soup = BeautifulSoup(initial_request.content, features="lxml")
@@ -74,9 +77,9 @@ def td_login(username, password):
     )
 
     # Verifica login
-    response = session.get(
-        "https://tecdigital.tec.ac.cr/dotlrn/courses", allow_redirects=False, timeout=10
-    )
+    response = session.get("https://tecdigital.tec.ac.cr/dotlrn/courses",
+                           allow_redirects=False,
+                           timeout=10)
     if response.status_code != 200:
         print_error("Los datos son incorrectos o el TEC Digital está caído.")
 
@@ -88,9 +91,9 @@ def obtener_cursos():
 
     base = "https://tecdigital.tec.ac.cr"
 
-    cursos_page = session.get(
-        "https://tecdigital.tec.ac.cr/dotlrn/courses", allow_redirects=True, timeout=10
-    )
+    cursos_page = session.get("https://tecdigital.tec.ac.cr/dotlrn/courses",
+                              allow_redirects=True,
+                              timeout=10)
 
     soup = BeautifulSoup(cursos_page.content, features="lxml")
     cursos_html = soup.select_one("#main-content .portlet ul")
@@ -108,13 +111,19 @@ def obtener_cursos():
 
         for curso in cursos_soup:
             titulo_curso = curso.text.strip()
-            url = base + curso.find("a", href=True)["href"].strip() + "file-storage"
+            url = base + curso.find("a",
+                                    href=True)["href"].strip() + "file-storage"
 
             folder_page = session.get(url, allow_redirects=True, timeout=10)
             regex = re.compile(r"\$rootScope\.GL_FOLDER_ID = ([0-9]*);")
-            folder_id = re.search(regex, folder_page.content.decode("utf-8")).group(1)
+            folder_id = re.search(regex,
+                                  folder_page.content.decode("utf-8")).group(1)
 
-            cursos.append({"titulo": titulo_curso, "url": url, "folder_id": folder_id})
+            cursos.append({
+                "titulo": titulo_curso,
+                "url": url,
+                "folder_id": folder_id
+            })
 
         data_semestre = {"titulo": titulo_semestre, "cursos": cursos}
         semestres_final.append(data_semestre)
@@ -210,7 +219,7 @@ _____ __     __   __ ___           ___    __  __  ________ __
         print("\n")
 
     if "AUTO_DOWNLOAD" not in environ and not query_yes_no(
-        "¿Desea iniciar la descarga de todos los archivos en la carpeta actual?"
+            "¿Desea iniciar la descarga de todos los archivos en la carpeta actual?"
     ):
         return
 
@@ -223,14 +232,17 @@ _____ __     __   __ ___           ___    __  __  ________ __
         for curso in semestre["cursos"]:
             print("Descargando archivos de " + curso["titulo"] + "...")
 
-            url = curso["url"] + "/download-archive?object_id=" + curso["folder_id"]
+            url = curso["url"] + "/download-archive?object_id=" + curso[
+                "folder_id"]
             response = session.get(url, stream=True)
-            total_size_in_bytes = int(response.headers.get("content-length", 0))
+            total_size_in_bytes = int(response.headers.get(
+                "content-length", 0))
             block_size = 1024  # 1 Kibibyte
-            progress_bar = tqdm(total=total_size_in_bytes, unit="iB", unit_scale=True)
-            filename = os.path.join(
-                dirname, semestre["titulo"], curso["titulo"] + ".zip"
-            )
+            progress_bar = tqdm(total=total_size_in_bytes,
+                                unit="iB",
+                                unit_scale=True)
+            filename = os.path.join(dirname, semestre["titulo"],
+                                    curso["titulo"] + ".zip")
             with open(filename, "wb") as file:
                 for data in response.iter_content(block_size):
                     progress_bar.update(len(data))
