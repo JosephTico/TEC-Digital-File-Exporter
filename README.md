@@ -28,5 +28,5 @@ Si necesita instalar docker: https://docs.docker.com/engine/install/ubuntu/#inst
 ## Docker paso por paso
 ```bash
 docker build . -t tecdigitalsync
-docker run -it -v $(pwd)/download:/download -e USERNAME=<CARNE> -e PASSWORD=<PIN> tecdigitalsync
+docker run -it git pius-v $(pwd)/download:/download -e USERNAME=<CARNE> -e PASSWORD=<PIN> tecdigitalsync
 ```

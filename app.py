@@ -242,7 +242,7 @@ _____ __     __   __ ___           ___    __  __  ________ __
                 else:
                     break
             else:
-                print_error("Ha ocurrido un error al descargar el curso.")
+                print("Ha ocurrido un error al descargar el curso " + curso["titulo"] + ".\n Saltando...")
             
 
 
