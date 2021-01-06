@@ -1,19 +1,19 @@
-import os
-import sys
 import datetime
-from base64 import b64encode, b64decode
-import requests
+import getpass
+import os
 import re
+import sys
 import threading
 import urllib.request
-import getpass
 import zipfile
-from bs4 import BeautifulSoup
-from progress.spinner import PixelSpinner
-from progress.bar import Bar
-from tqdm import tqdm
+from base64 import b64decode, b64encode
 from os import environ
 
+import requests
+from bs4 import BeautifulSoup
+from progress.bar import Bar
+from progress.spinner import PixelSpinner
+from tqdm import tqdm
 
 session = requests.Session()
 globalError = False
