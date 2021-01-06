@@ -14,9 +14,6 @@ from progress.bar import Bar
 from tqdm import tqdm
 
 
-
-# ASEGÚRESE DE CONFIGURAR LA VARIABLE DE ENTORNO 'SECRET' CON UN STRING ALEATORIO CRIPTOGRÁFICAMENTE SEGURO
-SECRET = os.environ.get('SECRET')
 session = requests.Session()
 globalError = False
 semestres_final = []
