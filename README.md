@@ -4,9 +4,9 @@ Script que permite exportar los archivos de cursos del [TEC Digital](https://tec
 
 ## Versión precompilada para Windows 10
 
-Puede descargar una versión ejecutable [haciendo clic acá](https://github.com/JosephTico/TEC-Digital-File-Exporter/releases/latest). No ocupa instalar nada más ni seguir las instrucciones de abajo, solo descomprimir el ZIP y ejecutar `app.exe`.
+Puede descargar una versión ejecutable [haciendo clic acá](https://github.com/JosephTico/TEC-Digital-File-Exporter/releases/latest). No ocupa instalar nada más, solo descomprimir el ZIP y ejecutar `app.exe`.
 
-Tenga en cuenta que esta versión no ha sido probada, por lo que si puede usar Python, se recomienda seguir las instrucciones de abajo en lugar de usar esta versión precompilada.
+Si puede usar Python, se recomienda seguir las instrucciones para la ejecución manual.
 
 ## Instrucciones para ejecución manual con Python
 
