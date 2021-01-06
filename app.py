@@ -233,7 +233,7 @@ _____ __     __   __ ___           ___    __  __  ________ __
                         with zipfile.ZipFile(filename,"r") as zip_ref:
                             zip_ref.extractall(os.path.join(dirname, semestre["titulo"]))
                     except:
-                        print("Ha ocurrido un error al descomprimir los contenidos de este curso. Se mantendrá el archivo comprimido")
+                        print("\nHa ocurrido un error al descomprimir los contenidos de este curso. Se mantendrá el archivo comprimido")
                     else:
                         os.remove(filename)
 
