@@ -152,13 +152,13 @@ _____ __     __   __ ___           ___    __  __  ________ __
     print("Exportador de archivos del TEC Digital")
     print("Creado por Joseph Vargas - https://twitter.com/JosephTico\n\n")
     print("Ingrese sus credenciales del TEC Digital y presione Enter.")
-    if "USERNAME" in environ:
-        username = environ.get('USERNAME')
+    if "TEC_USERNAME" in environ:
+        username = environ.get('TEC_USERNAME')
     else:
         username = input("Usuario: ").strip()
 
-    if "PASSWORD" in environ:
-        password = environ.get('PASSWORD')
+    if "TEC_PASSWORD" in environ:
+        password = environ.get('TEC_PASSWORD')
     else:
         password = getpass.getpass("Contraseña: ")
    
