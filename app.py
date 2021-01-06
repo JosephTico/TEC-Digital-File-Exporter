@@ -221,19 +221,21 @@ _____ __     __   __ ___           ___    __  __  ________ __
                     file.write(data)
             if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
                 print_error("Ha ocurrido un error al descargar el archivo.")
-
-            with zipfile.ZipFile(filename,"r") as zip_ref:
-                zip_ref.extractall(os.path.join(dirname, semestre["titulo"]))
-
-            os.remove(filename)
+            
+            try:
+                with zipfile.ZipFile(filename,"r") as zip_ref:
+                    zip_ref.extractall(os.path.join(dirname, semestre["titulo"]))
+            except:
+                print("El archivo de este curso no se ha podido descomprimir y se mantendrá así.")
+            else:
+                os.remove(filename)
 
             progress_bar.close()
 
 
 
-
-        print("\n")
-        print("Proceso finalizado.")
+    print("\n")
+    print("Proceso finalizado.")
 
 
 if __name__ == '__main__':
