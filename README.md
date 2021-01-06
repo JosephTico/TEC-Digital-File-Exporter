@@ -2,6 +2,12 @@
 
 Script que permite exportar los archivos de cursos del [TEC Digital](https://tecdigital.tec.ac.cr/) del Instituto Tecnológico de Costa Rica, debido al borrado masivo de archivos que va a ocurrir el 31 de enero de 2021.
 
+## Versión precompilada para Windows
+
+Puede descargar una versión ejecutable [haciendo clic acá](https://github.com/JosephTico/TEC-Digital-File-Exporter/releases/latest). No ocupa instalar nada más ni seguir las instrucciones de abajo, solo descomprimir el ZIP y ejecutar `app.exe`.
+
+## Instrucciones para correrlo manualmente ocn Python
+
 Para podere ejecutar este script necesita tener instalado Python 3.7 o superior. Clone este repositorio en la carpeta que desee trabajar e instale los requerimientos, ejecutando el comando:
 
 ```
