@@ -15,4 +15,4 @@ RUN pip install -r /code/requirements.txt
 COPY app.py /code
 
 # command to run on container start
-CMD [ "python", "/code/app.py" ] 
+CMD [ "python", "/code/app.py" ]
