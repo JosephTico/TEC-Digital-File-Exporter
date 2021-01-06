@@ -229,8 +229,13 @@ _____ __     __   __ ___           ___    __  __  ________ __
                     if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
                         raise Exception('Error al descargar el archivo.')
 
-                    with zipfile.ZipFile(filename,"r") as zip_ref:
-                        zip_ref.extractall(os.path.join(dirname, semestre["titulo"]))
+                    try:
+                        with zipfile.ZipFile(filename,"r") as zip_ref:
+                            zip_ref.extractall(os.path.join(dirname, semestre["titulo"]))
+                    except:
+                        print("Ha ocurrido un error al descomprimir los contenidos de este curso. Se mantendrá el archivo comprimido")
+                    else:
+                        os.remove(filename)
 
                     os.remove(filename)
 
