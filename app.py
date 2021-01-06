@@ -18,7 +18,7 @@ from os import environ
 session = requests.Session()
 globalError = False
 semestres_final = []
-dirname = os.path.dirname(__file__)
+dirname = os.getcwd()
 
 
 class DownloadProgressBar(tqdm):
