@@ -6,7 +6,7 @@ Script que permite exportar los archivos de cursos del [TEC Digital](https://tec
 
 Puede descargar una versión ejecutable, lista para usar, [haciendo clic acá](https://github.com/JosephTico/TEC-Digital-File-Exporter/releases/latest). No ocupa instalar nada más, solo descomprimir el ZIP y ejecutar `app.exe`.
 
-Si puede usar Python, se recomienda seguir las instrucciones para la ejecución manual.
+Si puede usar Python o no usa Windows, se recomienda seguir las instrucciones para la ejecución manual.
 
 ## Instrucciones para ejecución manual con Python
 
