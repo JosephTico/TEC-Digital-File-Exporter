@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 from progress.spinner import PixelSpinner
 from progress.bar import Bar
 from tqdm import tqdm
+from os import environ
 
 
 session = requests.Session()
@@ -151,8 +152,15 @@ _____ __     __   __ ___           ___    __  __  ________ __
     print("Exportador de archivos del TEC Digital")
     print("Creado por Joseph Vargas - https://twitter.com/JosephTico\n\n")
     print("Ingrese sus credenciales del TEC Digital y presione Enter.")
-    username = input("Usuario: ").strip()
-    password = getpass.getpass("Contraseña: ")
+    if "USERNAME" in environ:
+        username = environ.get('USERNAME')
+    else:
+        username = input("Usuario: ").strip()
+
+    if "PASSWORD" in environ:
+        password = environ.get('PASSWORD')
+    else:
+        password = getpass.getpass("Contraseña: ")
    
 
     spinner = PixelSpinner('Iniciando sesión... ')
@@ -193,7 +201,7 @@ _____ __     __   __ ___           ___    __  __  ________ __
 
         print("\n")
 
-    if not query_yes_no("¿Desea iniciar la descarga de todos los archivos en la carpeta actual?"):
+    if "AUTO_DOWNLOAD" not in environ and not query_yes_no("¿Desea iniciar la descarga de todos los archivos en la carpeta actual?"):
         return
 
 
