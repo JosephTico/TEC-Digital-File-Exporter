@@ -8,6 +8,8 @@ Puede descargar una versión ejecutable, lista para usar, [haciendo clic acá](h
 
 Si puede usar Python o no usa Windows, se recomienda seguir las instrucciones para la ejecución manual.
 
+_Nota: El ejecutable puede ser detectado como un falso positivo debido a la necesidad de incluir todas las bibliotecas de Python necesarias en el propio archivo, pero es totalmente seguro._
+
 ## Instrucciones para ejecución manual con Python
 
 Para podere ejecutar este script necesita tener instalado Python 3.7 o superior. Clone este repositorio en la carpeta que desee trabajar e instale los requerimientos, ejecutando el comando:
