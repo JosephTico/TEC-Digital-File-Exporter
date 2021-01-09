@@ -8,8 +8,7 @@ Puede descargar una versión ejecutable, lista para usar, [haciendo clic acá](h
 
 Si puede usar Python o no usa Windows, se recomienda seguir las instrucciones para la ejecución manual.
 
-_Nota: El ejecutable puede ser detectado como un falso positivo por algunos antivirus debido a la necesidad de incluir todas las bibliotecas de Python necesarias en el propio archivo, pero es totalmente seguro. Si lo desea siempre puede ejecutar manualmente usted mismo el código usando Python
-_
+_Nota: El ejecutable puede ser detectado como un falso positivo por algunos antivirus debido a la necesidad de incluir todas las bibliotecas de Python necesarias en el propio archivo, pero es totalmente seguro. Si lo desea siempre puede ejecutar manualmente usted mismo el código usando Python._
 
 ## Instrucciones para ejecución manual con Python
 
