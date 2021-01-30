@@ -237,8 +237,9 @@ _____ __     __   __ ___           ___    __  __  ________ __
                     else:
                         os.remove(filename)
 
-                    os.remove(filename)
-
+                    if os.path.exists(filename):
+                        os.remove(filename)
+                        
                     progress_bar.close()
                 except KeyboardInterrupt:
                     sys.exit()
